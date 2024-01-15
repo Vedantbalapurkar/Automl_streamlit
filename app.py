@@ -1,5 +1,6 @@
 #command -   streamlit run store.py --server.enableXsrfProtection=false
 import streamlit as st
+from pygwalker.api.streamlit import StreamlitRenderer, init_streamlit_comm
 import plotly.express as px
 import pandas as pd
 from streamlit_pandas_profiling import st_profile_report
@@ -7,6 +8,7 @@ from pycaret.regression import setup, compare_models, pull, save_model
 import os
 from streamlit.components.v1 import components
 #from autoviz import AutoViz_Class, data_cleaning_suggestions
+import pygwalker as pyg
 import time
 import sweetviz as sv
 #import pandas_profiling
@@ -34,22 +36,16 @@ st.markdown("""
         </style>
         """, unsafe_allow_html=True)
 
-# _, col2, _ = st.columns([1, 2, 1])
-# with col2:
-#     #st.title("This is my heading")
-# colT1,colT2 = st.columns([1,5])
-# with colT2:
-    #st.title(“Major Consumer Bundle Analysis”)
+
 
 
 st.header("🚀 Auto-ML Streamlit App", divider='rainbow')
-#st.header("<h1 style='text-align: center; color: red;'>Some title</h1>", unsafe_allow_html=True)
 
 # st.text("")
 # st.text("")
 # st.text("")
 # st.text("")
-tab_titles = ['Home','Visualization','Profiling','Modelling','Download','About']
+tab_titles = ['Home','Visualization','Advanced Visualization','Profiling','Modelling','Download','About']
 tabs = st.tabs(tab_titles)
 font_css = """
 <style>
@@ -62,13 +58,13 @@ button[data-baseweb="tab"] > div[data-testid="stMarkdownContainer"] > p {
 st.write(font_css, unsafe_allow_html=True)
 
 
-with tabs[3]:
+with tabs[4]:
     st.error("Modeling section are under development. Coming soon!")
 
-with tabs[4]:
+with tabs[5]:
     st.error("Download section are under development. Coming soon!")
 
-with tabs[5]:
+with tabs[6]:
     st.markdown("## About Auto-ML Streamlit App 🌐✨")
 
     st.markdown("Welcome to the About section! Here, we provide some background and information about our Auto-ML Streamlit App.")
@@ -79,8 +75,7 @@ with tabs[5]:
     st.subheader("Team:")
     st.write("Auto-ML Streamlit App is developed and maintained by a dedicated team of machine learning enthusiasts. Meet our core team members:")
     st.write("- [Vedant Balapurkar](#)")
-    #st.write("- [Team Member 2](#)")
-    #st.write("- [Team Member 3](#)")
+   
 
     st.subheader("Acknowledgments:")
     st.write("We would like to express our gratitude to the open-source community and contributors who have played a crucial role in the development of this app. Additionally, we appreciate the support and feedback from our users, helping us improve and enhance the app.")
@@ -118,7 +113,7 @@ with tabs[0]:
                 "   - 🌈 Access advanced features seamlessly.")
     
 
-with tabs[2]:
+with tabs[3]:
     st.subheader("Exploratory Data Analysis")
 
     # File uploader for dataset
@@ -163,6 +158,67 @@ with tabs[2]:
 # Optionally, you can remove the temporary HTML file after displaying the report
 # import os
         #os.remove(report_path)
+
+
+# 
+
+with tabs[2]:
+    # Establish communication between pygwalker and streamlit
+    init_streamlit_comm()
+    
+    # Add a title
+    st.subheader("Data Visualization Using Pygwalker")
+
+    # File uploader for PygWalker
+    st.markdown("Upload Your Dataset for PygWalker")
+    file_pygwalker = st.file_uploader("", type=["csv"])
+
+    # Create columns for layout
+    col1, col2, col3, col4, col5 = st.columns([1, 1.3, 1, 1, 1])  # Adjust column ratios as needed
+
+    with col3:
+        # Centered button to trigger analysis
+        st.markdown("")
+        st.markdown("")
+        st.markdown("")
+        generate_pygwalker = st.button("Generate Visualization")
+
+        # Progress circle
+        progress_circle = st.empty()
+
+    if file_pygwalker and generate_pygwalker:
+        # Read the uploaded file
+        df_pygwalker = pd.read_csv(file_pygwalker)
+
+        # Get an instance of pygwalker's renderer. You should cache this instance to effectively prevent the growth of in-process memory.
+        @st.cache_resource
+        def get_pyg_renderer(data_df) -> "StreamlitRenderer":
+            # When you need to publish your app to the public, you should set the debug parameter to False to prevent other users from writing to your chart configuration file.
+            return StreamlitRenderer(data_df, spec="./gw_config.json", debug=False)
+        
+        renderer = get_pyg_renderer(df_pygwalker)
+        #renderer = pyg.walk(df_pygwalker)
+
+        # Render your data exploration interface. Developers can use it to build charts by drag and drop.
+        with st.spinner("Generating PygWalker Visualization..."):
+            for percent_complete in range(100):
+                time.sleep(0.1)  # Simulate computation time
+                progress_circle.text(f"Progress: {percent_complete + 1}%")
+
+
+
+        # Clear the progress circle after completion
+        progress_circle.empty()
+
+        st.markdown("")
+        st.markdown("")
+        st.markdown("")
+        st.markdown("")
+        st.markdown("")
+        st.markdown("")
+        # Render your data exploration interface after the progress is complete
+        st.subheader("Start Vizualizing The Data")
+        renderer.render_explore()
 
 
 
@@ -442,10 +498,16 @@ with tabs[1]:
         # Submit button to generate chart
         if st.button("Generate Chart"):
             with st.spinner(text="Generating"):
-                time.sleep(3)
+                time.sleep(5)
                 #st.success("Generated")
             generate_chart(df, chart_type, selected_columns)
 
 # Run the app
     if __name__ == "__main__":
         main()
+
+
+
+
+
+
