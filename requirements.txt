@@ -1,0 +1,6 @@
+streamlit 
+pygwalker
+plotly-express
+pycaret
+streamlit-pandas-profiling
+sweetviz
