@@ -47,7 +47,7 @@ ImageHash==4.3.1
 imbalanced-learn==0.11.0
 importlib-metadata==7.0.1
 importlib-resources
-ipython==8.20.0
+ipython
 ipywidgets==8.1.1
 itsdangerous==2.1.2
 jedi==0.19.1
@@ -175,3 +175,4 @@ xlrd==2.0.1
 xxhash==3.4.1
 yellowbrick==1.5
 zipp==3.17.0
+#ipython==8.20.0
