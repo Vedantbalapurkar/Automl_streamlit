@@ -112,7 +112,7 @@ python-dateutil==2.8.2
 pytz==2023.3.post1
 pyviz_comms==3.0.0
 PyWavelets==1.5.0
-pywin32==306
+pywin32
 PyYAML==6.0.1
 referencing==0.32.1
 regex==2023.12.25
@@ -176,3 +176,4 @@ xxhash==3.4.1
 yellowbrick==1.5
 zipp==3.17.0
 #ipython==8.20.0
+#pywin32==306
